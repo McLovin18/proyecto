@@ -1,8 +1,8 @@
 class Carta:
     def __init__(self, nombre, descripcion, tipo_carta):
-        self._nombre = nombre  # Privada
-        self._descripcion = descripcion  # Privada
-        self._tipo_carta = tipo_carta  # Privada
+        self._nombre = nombre
+        self._descripcion = descripcion
+        self._tipo_carta = tipo_carta
 
     @property
     def nombre(self):

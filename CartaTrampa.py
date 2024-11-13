@@ -3,7 +3,7 @@ from Carta import Carta
 class CartaTrampa(Carta):
     def __init__(self, nombre, descripcion, atributo_bloqueo):
         super().__init__(nombre, descripcion, "Trampa")
-        self._atributo_bloqueo = atributo_bloqueo  # Privada
+        self._atributo_bloqueo = atributo_bloqueo
 
     @property
     def atributo_bloqueo(self):

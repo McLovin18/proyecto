@@ -2,11 +2,11 @@ from Carta import Carta
 class CartaMonstruo(Carta):
     def __init__(self, nombre, descripcion, ataque, defensa, tipo, atributo):
         super().__init__(nombre, descripcion, "Monstruo")
-        self._ataque = ataque  # Privada
-        self._defensa = defensa  # Privada
-        self._tipo = tipo  # Privada
-        self._atributo = atributo  # Privada
-        self._posicion = "Ataque"  # Por defecto se pone en posición de ataque
+        self._ataque = ataque  
+        self._defensa = defensa 
+        self._tipo = tipo
+        self._atributo = atributo
+        self._posicion = "Ataque"
 
     @property
     def ataque(self):

@@ -7,12 +7,12 @@ from CartaTrampa import CartaTrampa
 
 class Jugador:
     def __init__(self, nombre):
-        self._nombre = nombre  # Privada
-        self._vida = 4000  # Privada
-        self._deck = self.generar_deck()  # Privada
-        self._cartas_en_mano = []  # Privada
-        self._tablero_monstruos = [None] * 3  # 3 espacios para monstruos
-        self._tablero_magicas_trampa = [None] * 3  # 3 espacios para cartas mágicas o trampas
+        self._nombre = nombre
+        self._vida = 4000
+        self._deck = self.generar_deck()
+        self._cartas_en_mano = []
+        self._tablero_monstruos = [None] * 3
+        self._tablero_magicas_trampa = [None] * 3
 
     @property
     def nombre(self):
