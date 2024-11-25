@@ -44,4 +44,38 @@ class Jugador:
 
 
     def robar_carta(self):
-        return("")
+        if self._deck:
+            carta = self._deck.pop(0)
+            self._cartas_en_mano.append(carta)
+            return carta
+        return None
+    
+
+    def colocar_carta_monstruo(self, carta, posicion, orientacion):
+        if 0 <= posicion < 3 and self._tablero_monstruos[posicion] is None:
+            carta._orientacion = orientacion
+            carta._boca_arriba = orientacion == "ATAQUE"
+            self._tablero_monstruos[posicion] = carta
+
+    
+
+    def colocar_carta_magia_trampa(self, carta, posicion):
+        if 0 <= posicion < 3 and self._tablero_magicas_trampa[posicion] is None:
+            self._tablero_magicas_trampa[posicion] = carta
+
+    def get_puntos_vida(self):
+        return self._vida
+
+    def modificar_puntos_vida(self, cantidad):
+        self._vida += cantidad
+
+    def __str__(self):
+        mano = ", ".join([str(carta) for carta in self._mano])
+        monstruos = ", ".join([str(c) if c else "[Vacío]" for c in self._tablero_monstruos])
+        magias_trampas = ", ".join([str(c) if c else "[Vacío]" for c in self._tablero_magicas_trampa])
+        return (
+            f"Jugador: {self._nombre} (Puntos de vida: {self._vida})\n"
+            f"Mano: {mano}\n"
+            f"Tablero Monstruos: {monstruos}\n"
+            f"Tablero Magia/Trampa: {magias_trampas}"
+        )

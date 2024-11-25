@@ -27,3 +27,7 @@ class Carta:
     @tipo_carta.setter
     def tipo_carta(self, value):
         self._tipo_carta = value
+
+
+    def __str__(self):
+        return f"{self._nombre}: {self._descripcion}"
