@@ -1,33 +1,70 @@
 class Carta:
-    def __init__(self, nombre, descripcion, tipo_carta):
-        self._nombre = nombre
-        self._descripcion = descripcion
-        self._tipo_carta = tipo_carta
+    def __init__(self, nombre, descripcion):
+        self.nombre = nombre
+        self.descripcion = descripcion
 
-    @property
-    def nombre(self):
-        return self._nombre
+    def get_nombre(self):
+        return self.nombre
 
-    @property
-    def descripcion(self):
-        return self._descripcion
+    def get_descripcion(self):
+        return self.descripcion
 
-    @property
-    def tipo_carta(self):
-        return self._tipo_carta
+class CartaMonstruo(Carta):
+    def __init__(self, nombre, descripcion, ataque, defensa, tipo, atributo):
+        super().__init__(nombre, descripcion)
+        self.ataque = ataque
+        self.defensa = defensa
+        self.tipo = tipo
+        self.atributo = atributo
+        self.boca_arriba = True
+        self.modo = "ATAQUE"  # Puede ser "ATAQUE" o "DEFENSA"
 
-    @nombre.setter
-    def nombre(self, value):
-        self._nombre = value
+    def get_ataque(self):
+        return self.ataque
 
-    @descripcion.setter
-    def descripcion(self, value):
-        self._descripcion = value
+    def set_ataque(self, nuevo_ataque):
+        self.ataque = nuevo_ataque
 
-    @tipo_carta.setter
-    def tipo_carta(self, value):
-        self._tipo_carta = value
+    def get_defensa(self):
+        return self.defensa
 
+    def set_defensa(self, nueva_defensa):
+        self.defensa = nueva_defensa
 
-    def __str__(self):
-        return f"{self._nombre}: {self._descripcion}"
+    def get_tipo(self):
+        return self.tipo
+
+    def get_atributo(self):
+        return self.atributo
+
+    def get_boca_arriba(self):
+        return self.boca_arriba
+
+    def set_boca_arriba(self, estado):
+        self.boca_arriba = estado
+
+    def get_modo(self):
+        return self.modo
+
+    def set_modo(self, nuevo_modo):
+        self.modo = nuevo_modo
+
+class CartaMagica(Carta):
+    def __init__(self, nombre, descripcion, incremento, tipo_monstruo):
+        super().__init__(nombre, descripcion)
+        self.incremento = incremento
+        self.tipo_monstruo = tipo_monstruo
+
+    def get_incremento(self):
+        return self.incremento
+
+    def get_tipo_monstruo(self):
+        return self.tipo_monstruo
+
+class CartaTrampa(Carta):
+    def __init__(self, nombre, descripcion, atributo_contra):
+        super().__init__(nombre, descripcion)
+        self.atributo_contra = atributo_contra
+
+    def get_atributo_contra(self):
+        return self.atributo_contra
