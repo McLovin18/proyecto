@@ -4,52 +4,72 @@ import random
 
 class Juego:
     def __init__(self):
-        self.jugador = Jugador("Jugador")
-        self.maquina = Jugador("Máquina")
-        self.turno = 1
-        self.jugador_actual = None
+        # Cartas iniciales
+        self.cartas = [
+            CartaMonstruo("Dragón Rojo", "Dragón de fuego que destruye todo a su paso", 2500, 2000, "Monstruo", "FUEGO"),
+            CartaMonstruo("Lanzador Mágico", "Monstruo que lanza hechizos poderosos", 1500, 1000, "Monstruo", "LUZ"),
+            CartaMonstruo("Zombi Infierno", "Zombi con poderes oscuros", 1800, 1500, "Monstruo", "OSCURIDAD"),
+            CartaMonstruo("Guerrero Valiente", "Guerrero de gran coraje", 1600, 1200, "Monstruo", "TIERRA"),
+            CartaMonstruo("Bestia Salvaje", "Bestia feroz que ataca sin piedad", 1700, 1300, "Monstruo", "AGUA"),
+            CartaMagica("Espada de Arturo", "Aumenta el ataque de los guerreros", 200, "Guerrero"),
+            CartaMagica("Escudo de Chamelote", "Aumenta la defensa de los guerreros", 200, "Guerrero"),
+            CartaMagica("Poción de Vida", "Restaura 500 puntos de vida a un jugador", 500, "Ninguno"),
+            CartaTrampa("Barrera de Magia", "Protege un monstruo de los ataques", "Ninguno"),
+            CartaTrampa("Tornado de Polvo", "Detiene el ataque de un monstruo de atributo VIENTO", "VIENTO")
+        ]
 
-    def inicializar_decks(self):
-        # Configuración de las cartas (monstruos, mágicas y trampas)
-        tipos_monstruos = ["L", "D", "Z", "G", "B", "O"]  # LUZ, OSCURIDAD, TIERRA, AGUA, FUEGO, VIENTO
-        atributos = ["OSCURIDAD", "LUZ", "TIERRA", "AGUA", "FUEGO", "VIENTO"]
+        # Jugadores
+        self.jugador = Jugador("jugador")
+        self.maquina = Jugador("maquina")
 
-        for _ in range(20):  # Monstruos
-            carta = CartaMonstruo(
-                nombre=f"Monstruo_{random.randint(1, 100)}",
-                descripcion="Carta de monstruo",
-                ataque=random.randint(1000, 3000),
-                defensa=random.randint(1000, 3000),
-                tipo=random.choice(tipos_monstruos),
-                atributo=random.choice(atributos),
-            )
-            self.jugador.get_deck().append(carta)
-            self.maquina.get_deck().append(carta)
+        self.turno = 1  # Iniciar el turno
 
-        for _ in range(5):  # Mágicas
-            carta = CartaMagica(
-                nombre=f"Mágica_{random.randint(1, 100)}",
-                descripcion="Carta mágica",
-                incremento=random.randint(100, 500),
-                tipo_monstruo=random.choice(tipos_monstruos),
-            )
-            self.jugador.get_deck().append(carta)
-            self.maquina.get_deck().append(carta)
+        self.iniciar_juego()
 
-        for _ in range(5):  # Trampas
-            carta = CartaTrampa(
-                nombre=f"Trampa_{random.randint(1, 100)}",
-                descripcion="Carta de trampa",
-                atributo_contra=random.choice(atributos),
-            )
-            self.jugador.get_deck().append(carta)
-            self.maquina.get_deck().append(carta)
+    def iniciar_juego(self):
+        # Asignar 5 cartas aleatorias a la mano del jugador
+        self.jugador.set_mano(random.sample(self.cartas, 5))
+        
+        # Asignar 5 cartas aleatorias a la mano de la máquina
+        self.maquina.set_mano(random.sample(self.cartas, 5))
+        
+        print("--- Cartas Iniciales del Jugador ---")
+        for carta in self.jugador.get_mano():
+            print(carta.get_nombre())
+        
+        print("--- Cartas Iniciales de la Máquina ---")
+        for carta in self.maquina.get_mano():
+            print(carta.get_nombre())
 
-        random.shuffle(self.jugador.get_deck())
-        random.shuffle(self.maquina.get_deck())
+    
+    def realizar_ataque(self, atacante, defensor, monstruo_atacante):
+        # Verificar si hay monstruos en el tablero del defensor
+        if len(defensor.get_tablero_monstruos()) == 0:
+            print("No hay monstruos en el tablero del defensor para atacar directamente.")
+            # Si no hay monstruos, el ataque va directo a los puntos de vida
+            defensor.perder_vida(monstruo_atacante.get_ataque())
+            print(f"{monstruo_atacante.get_nombre()} ataca directamente y reduce la vida de {defensor.get_nombre()} a {defensor.get_vida()}.")
+            return
 
-        self.jugador.inicializar_mano()
-        self.maquina.inicializar_mano()
+        # Elige un monstruo defensor aleatorio
+        monstruo_defensor = random.choice(defensor.get_tablero_monstruos())
+        print(f"{monstruo_atacante.get_nombre()} está atacando a {monstruo_defensor.get_nombre()}.")
+
+        # Comparar puntos de ataque del atacante con los puntos de defensa del defensor
+        if monstruo_atacante.get_ataque() > monstruo_defensor.get_defensa():
+            print(f"{monstruo_atacante.get_nombre()} destruye a {monstruo_defensor.get_nombre()}!")
+            defensor.get_tablero_monstruos().remove(monstruo_defensor)  # Eliminar monstruo defensor del tablero
+            daño = monstruo_atacante.get_ataque() - monstruo_defensor.get_defensa()
+            defensor.perder_vida(daño)  # Reducir los puntos de vida
+            print(f"{defensor.get_nombre()} pierde {daño} puntos de vida. Vida restante: {defensor.get_vida()}.")
+        elif monstruo_atacante.get_ataque() == monstruo_defensor.get_defensa():
+            print(f"El ataque de {monstruo_atacante.get_nombre()} ha sido neutralizado. Ambos monstruos permanecen en el campo.")
+        else:
+            print(f"{monstruo_atacante.get_nombre()} no puede destruir a {monstruo_defensor.get_nombre()}. El atacante recibe daño.")
+            daño = monstruo_defensor.get_defensa() - monstruo_atacante.get_ataque()
+            atacante.perder_vida(daño)
+            print(f"{atacante.get_nombre()} pierde {daño} puntos de vida. Vida restante: {atacante.get_vida()}.")
+
 
 
 
@@ -58,168 +78,139 @@ class Juego:
         # Muestra el estado del juego después de cada turno
         print("\n--- Estado del Juego ---")
         print(f"Vida del Jugador: {self.jugador.get_vida()}")
-        print(f"Vida de la maquina: {self.maquina.get_vida()}")
-        print("Tablero de Monstruos del Jugador:")
+        print(f"Vida de la máquina: {self.maquina.get_vida()}")
+
+        # Mostrar monstruos en los tableros
+        print("\nTablero de Monstruos del Jugador:")
         for i, carta in enumerate(self.jugador.get_tablero_monstruos()):
             if carta:
                 print(f"[{i}] {carta.get_nombre()} - Modo: {carta.get_modo()}")
 
-        print(f"Vida de la Máquina: {self.maquina.get_vida()}")  # Mostrar vida (puntos)
-        print("Tablero de Monstruos de la Máquina:")
+        print("\nTablero de Monstruos de la Máquina:")
         for i, carta in enumerate(self.maquina.get_tablero_monstruos()):
             if carta:
                 print(f"[{i}] {carta.get_nombre()} - Modo: {carta.get_modo()}")
 
         print("\nMano de la Máquina:")
-        for idx, carta in enumerate(self.maquina.get_mano()):
-            print(f"[{idx}] {carta.get_nombre()}")
+        self.maquina.mostrar_mano()  # Mostrar la mano del jugador
 
-
-
-    def realizar_ataque(self, atacante, defensor, carta_atacante):
-        print(f"{atacante.get_nombre()} ataca con {carta_atacante.get_nombre()}!")
-
-        monstruos_defensa = [m for m in defensor.get_tablero_monstruos() if m and m.get_modo() == "DEFENSA"]
-
-        if monstruos_defensa:
-            # Ataque contra el primer monstruo en defensa (puedes cambiar esta lógica si prefieres atacar a todos)
-            monstruo_defensor = monstruos_defensa[0]
-            print(f"Atacando {monstruo_defensor.get_nombre()} con ataque de {carta_atacante.get_ataque()} y defensa de {monstruo_defensor.get_defensa()}")
-
-            if carta_atacante.get_ataque() > monstruo_defensor.get_defensa():
-                print(f"{monstruo_defensor.get_nombre()} es destruido!")
-                defensor.get_tablero_monstruos()[defensor.get_tablero_monstruos().index(monstruo_defensor)] = None
-            else:
-                print(f"{monstruo_defensor.get_nombre()} defiende con éxito!")
-        else:
-            # Ataque directo
-            daño = carta_atacante.get_ataque()
-            defensor.set_vida(defensor.get_vida() - daño)
-            print(f"¡{atacante.get_nombre()} inflige {daño} puntos de daño directamente!")
-
-        if defensor.get_vida() <= 0:
-            print(f"{defensor.get_nombre()} ha perdido el juego.")
-            return True  # El juego termina aquí
-
-        return False  # El juego no termina
-
-
+    def robar_carta(self, jugador):
+        # Robar una carta aleatoria de la lista de cartas
+        carta_robada = random.choice(self.cartas)
+        print(f"{jugador.get_nombre()} ha robado una carta: {carta_robada.get_nombre()}")
+        jugador.agregar_carta_a_mano(carta_robada)
 
     def jugar_turno_jugador(self):
-        print("\n--- Turno del Jugador ---")
+        print("--- Turno del Jugador ---")
+
+        # El jugador roba una carta si tiene menos de 5 cartas en mano
         if len(self.jugador.get_mano()) < 5:
-            self.jugador.robar_carta()
-            print("Has robado una carta.")
+            self.robar_carta(self.jugador)
 
-        turno_terminado = False
+        # Mostrar las cartas del jugador
+        print("Cartas en la mano del jugador:")
+        for idx, carta in enumerate(self.jugador.get_mano()):
+            tipo = type(carta).__name__
+            print(f"[{idx}] {carta.get_nombre()} - {tipo}")
 
-        while not turno_terminado:
-            self.jugador.mostrar_mano()
-            accion = input("Elige una acción:\n1. Jugar carta\n2. Pasar turno\nOpción: ")
+        # El jugador elige una carta de su mano
+        eleccion = int(input("Elige una carta para jugar (0-{}) : ".format(len(self.jugador.get_mano()) - 1)))  # Aquí cambiamos el rango
+        carta = self.jugador.get_mano()[eleccion]  # Utilizamos el índice correcto
+        print(f"El jugador ha elegido {carta.get_nombre()}")
 
-            if accion == "1":
-                try:
-                    indice = int(input("Elige el índice de la carta a jugar: "))
-                    carta = self.jugador.get_mano()[indice]
+        if isinstance(carta, CartaMonstruo):  # Si la carta es un monstruo
+            # El jugador decide si jugarla en modo ataque o defensa
+            modo = input("¿Quieres jugarlo en modo ataque o defensa? (A/D): ").upper()
+            if modo == "A":
+                print(f"El jugador coloca {carta.get_nombre()} en modo ATAQUE.")
+                carta.set_modo("ATAQUE")
+                carta.set_boca_arriba(True)
+                self.jugador.get_tablero_monstruos().append(carta)
+            elif modo == "D":
+                print(f"El jugador coloca {carta.get_nombre()} en modo DEFENSA.")
+                carta.set_modo("DEFENSA")
+                carta.set_boca_arriba(False)
+                self.jugador.get_tablero_monstruos().append(carta)
 
-                    if isinstance(carta, CartaMonstruo):
-                        posicion = input("Colocar en (A)taque o (D)efensa: ").upper()
-                        carta.set_modo("ATAQUE" if posicion == 'A' else "DEFENSA")
-                        self.jugador.get_mano().pop(indice)
-                        self.jugador.get_tablero_monstruos().append(carta)
+        elif isinstance(carta, CartaTrampa):  # Si la carta es una trampa
+            print(f"El jugador coloca {carta.get_nombre()} en el campo de trampas.")
+            self.jugador.get_tablero_trampas().append(carta)
 
-                        print(f"{self.jugador.get_nombre()} ha jugado {carta.get_nombre()} en modo {carta.get_modo()}.")
-                        
-                        if carta.get_modo() == "ATAQUE":
-                            if self.realizar_ataque(self.jugador, self.maquina, carta):
-                                return  # El juego termina si el ataque gana
-                            
-                            turno_terminado = True
+        elif isinstance(carta, CartaMagica):  # Si la carta es una carta mágica
+            print(f"El jugador activa {carta.get_nombre()}.")
+            self.realizar_ataque(self.jugador, self.maquina, carta)
 
-                    elif isinstance(carta, CartaMagica):
-                        # Lógica de carta mágica
-                        pass
-
-                    elif isinstance(carta, CartaTrampa):
-                        # Lógica de carta trampa
-                        pass
-
-                    turno_terminado = True  # El jugador termina su turno después de jugar una carta
-
-                except IndexError:
-                    print("Índice no válido.")
-                except ValueError:
-                    print("Por favor, ingrese un número válido.")
-
-            elif accion == "2":
-                turno_terminado = True  # El jugador decide pasar turno
-
-        print("Fin del turno del Jugador.")
-
-    
 
     def jugar_turno_maquina(self):
-        print("\n--- Turno de la Máquina ---")
-        self.maquina.robar_carta()  # La máquina roba una carta
+        print("--- Turno de la Máquina ---")
 
-        # Estrategia: Jugar una carta de la mano
+        if len(self.maquina.get_mano()) < 5:
+            self.robar_carta(self.maquina)
+
+        print("Cartas en la mano de la máquina:")
+        for idx, carta in enumerate(self.maquina.get_mano()):
+            tipo = type(carta).__name__
+            print(f"[{idx}] {carta.get_nombre()} - {tipo}")
+
+        # Primero, verifica si hay cartas trampa que puedan activarse
         for carta in self.maquina.get_mano():
-            if isinstance(carta, CartaMonstruo):
-                # Decidir si colocar en ataque o defensa
-                posicion = "ATAQUE" if carta.get_ataque() >= carta.get_defensa() else "DEFENSA"
-                carta.set_modo(posicion)
-                carta.set_boca_arriba(True)  # Siempre boca arriba al jugar
-                self.maquina.get_mano().remove(carta)
-                self.maquina.get_tablero_monstruos().append(carta)
-                print(f"La máquina juega {carta.get_nombre()} en modo {posicion}.")
-                break  # Termina al jugar una carta
-            elif isinstance(carta, CartaMagica):
-                # Jugar una carta mágica
-                for monstruo in self.maquina.get_tablero_monstruos():
-                    if monstruo and monstruo.get_tipo() == carta.get_tipo_monstruo():
-                        monstruo.set_ataque(monstruo.get_ataque() + carta.get_incremento())
-                        self.maquina.get_mano().remove(carta)
-                        print(f"La máquina usa {carta.get_nombre()} en {monstruo.get_nombre()}, incrementando su ataque.")
-                        break
-                break  # Termina al usar una carta mágica
-            elif isinstance(carta, CartaTrampa):
-                # Colocar una trampa en el tablero
-                self.maquina.get_mano().remove(carta)
-                self.maquina.get_tablero_trampas().append(carta)
-                print(f"La máquina coloca una trampa: {carta.get_nombre()}.")
-                break  # Termina al colocar una trampa
+            if isinstance(carta, CartaTrampa):
+                # Si es una carta trampa, intenta activarla
+                if self.jugador.get_tablero_monstruos():
+                    # La máquina elige un monstruo de su tablero para atacar
+                    monstruo_atacante = random.choice(self.maquina.get_tablero_monstruos())
+                    print(f"La máquina decide atacar con {monstruo_atacante.get_nombre()}.")
+                    self.realizar_ataque(self.maquina, self.jugador, monstruo_atacante)
 
-        # Estrategia: Declarar batalla con cartas en ataque
-        for carta in self.maquina.get_tablero_monstruos():
-            if carta and carta.get_modo() == "ATAQUE":
-                print(f"La máquina ataca con {carta.get_nombre()}.")
-                if self.realizar_ataque(self.maquina, self.jugador, carta):
-                    return  # Termina si el jugador pierde
+        # Si no se activó ninguna trampa, la máquina juega una carta normal
+        carta = random.choice(self.maquina.get_mano())  # Elegir carta aleatoria de la mano
+        print(f"La máquina elige {carta.get_nombre()}")
 
-        print("La máquina no puede realizar más acciones y pasa el turno.")
+        # Si es una carta monstruo, se maneja como en el turno del jugador
+        if isinstance(carta, CartaMonstruo):
+            # La máquina juega el monstruo en modo ataque o defensa de forma aleatoria
+            modo = random.choice(["A", "D"])
+            if modo == "A":
+                print(f"La máquina coloca {carta.get_nombre()} en modo ATAQUE.")
+                carta.set_modo("ATAQUE")
+                carta.set_boca_arriba(True)
+            elif modo == "D":
+                print(f"La máquina coloca {carta.get_nombre()} en modo DEFENSA.")
+                carta.set_modo("DEFENSA")
+                carta.set_boca_arriba(False)
+            self.maquina.get_tablero_monstruos().append(carta)
+
+            # Si la máquina tiene monstruos en el tablero, realiza un ataque
+            if self.jugador.get_tablero_monstruos():
+                ataque_objetivo = random.choice(self.jugador.get_tablero_monstruos())  # Elegir monstruo aleatorio del jugador
+                print(f"La máquina decide atacar a {ataque_objetivo.get_nombre()} con {carta.get_nombre()}.")
+                self.realizar_ataque(self.maquina, self.jugador, carta)
+                return  # Después de atacar, termina el turno de la máquina
+
 
 
     def jugar(self):
-        self.inicializar_decks()
-
         while self.jugador.get_vida() > 0 and self.maquina.get_vida() > 0:
-            if self.turno % 2 == 1:
-                self.jugar_turno_jugador()
-            else:
-                self.jugar_turno_maquina()
-
             self.mostrar_estado_juego()
-            self.turno += 1  # Cambiar turno
 
-        if self.jugador.get_vida() <= 0:
-            print("¡La máquina gana!")
-        elif self.maquina.get_vida() <= 0:
-            print("¡El jugador gana!")
+            # Turno del jugador
+            self.jugar_turno_jugador()
 
+            if self.maquina.get_vida() <= 0:
+                print("¡El jugador ha ganado!")
+                break
 
-if __name__ == "__main__":
-    juego = Juego()
-    juego.jugar()
+            # Turno de la máquina
+            self.jugar_turno_maquina()
+
+            if self.jugador.get_vida() <= 0:
+                print("¡La máquina ha ganado!")
+                break
+
+# Inicializamos el juego
+juego = Juego()
+juego.jugar()
+
 
 
 
