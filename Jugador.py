@@ -21,7 +21,26 @@ class Jugador:
         for carta in self.deck:
             print(carta.get_nombre(), "-", carta.get_descripcion())
 
-    
+    def activar_carta_magica(self, jugador, carta):
+        """Activa una carta mágica y aplica su efecto."""
+        print(f"Activando {carta.get_nombre()} de {jugador.get_nombre()}.")
+
+        if carta.get_tipo_efecto() == "Ataque":
+            if jugador.get_tablero_monstruos():
+                monstruo = jugador.get_tablero_monstruos()[0]  # Escoge el primer monstruo
+                carta.aplicar_efecto(monstruo)
+            else:
+                print("No hay monstruos en el tablero para aplicar el efecto de ataque.")
+
+        elif carta.get_tipo_efecto() == "Defensa":
+            if jugador.get_tablero_monstruos():
+                monstruo = jugador.get_tablero_monstruos()[0]  # Escoge el primer monstruo
+                carta.aplicar_efecto(monstruo)
+            else:
+                print("No hay monstruos en el tablero para aplicar el efecto de defensa.")
+
+        else:
+            print(f"El efecto de la carta {carta.get_nombre()} no se puede aplicar.")
     def agregar_carta_a_mano(self, carta):
         self.mano.append(carta)  # Agregar la carta a la mano del jugador
 
@@ -67,7 +86,11 @@ class Jugador:
 
     def get_tablero_magicas(self):
         return self.tablero_magicas
-    
 
+    def perder_vida(self, cantidad):
+        self.vida -= cantidad
+        if self.vida < 0:
+            self.vida = 0
+        print(f"Vida restante del jugador: {self.vida}")
     def get_tablero_trampas(self):
         return self.tablero_trampas
