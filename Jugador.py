@@ -21,77 +21,81 @@ class Jugador:
             self.vida = 0
         print(f"Vida restante del jugador: {self.vida}")
 
-    def aplicar_efecto(self, carta):
-        
-        if carta.get_nombre() == "Espada de Arturo":
-                # Aumenta el ataque de todos los guerreros en el tablero
-                for monstruo in self.get_tablero_monstruos():
-                    if monstruo.get_tipo() == "Guerrero":
-                        monstruo.set_ataque(monstruo.get_ataque() + self.incremento)
-                        print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_ataque()} de ataque.")
-
-        if carta.get_nombre() == "Escudo de Chamelote":
-                # Aumenta la defensa de todos los guerreros en el tablero
-                for monstruo in self.get_tablero_monstruos():
-                    if monstruo.get_tipo() == "G":
-                        monstruo.set_defensa(monstruo.get_defensa() + self.incremento)
-                        print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_defensa()} de defensa.")
-
-        if carta.get_nombre()=="Pocion de Vida":
-            
-            # Restaura 500 puntos de vida al jugador
-            self.set_vida(self.get_vida() + 500)
-            print(f"{self.get_nombre()} ahora tiene {self.get_vida()} puntos de vida.")
-
-        if carta.get_nombre() == "Rayo Concentrado":
-            count = 0
-            lista = []               
-            # Aumenta el ataque de un monstruo tipo Dragón seleccionado
-            for mounstruo in self.get_tablero_magicas_trampa():
-                    
-                if mounstruo.get_tipo() == "D" and count==0:
-                    count+=1
-                    mounstruo.set_ataque(mounstruo.get_ataque() + self.incremento )
-
-            if(count == 0):
-                print("No se seleccionó un monstruo de tipo Dragón válido.")
-
-        if carta.get_nombre() == "Barrera de Magia":
-            # Presenta la lista de monstruos en el tablero
-            print("se ingreso a barrera de magia1")
-            if self.get_tablero_monstruos():
-                print("Selecciona el monstruo al que deseas proteger:")
-
-        # Muestra los monstruos en el tablero con sus posiciones
-                for idx, monstruo in enumerate(self.get_tablero_monstruos()):
-                    print(f"[{idx}] {monstruo.get_nombre()} - Ataque: {monstruo.get_ataque()}, Defensa: {monstruo.get_defensa()}")
-
-        # Pide al usuario que seleccione un monstruo por su posición
-                while True:
-                    try:
-                        seleccion = int(input("Ingresa el número de la posición del monstruo: "))
-
-                 # Verifica que la selección sea válida
-                        if 0 <= seleccion < len(self.get_tablero_monstruos()):
-                            monstruo_seleccionado = self.get_tablero_monstruos()[seleccion]
-
-                            # Marca al monstruo como protegido
-                            monstruo_seleccionado.set_protegido(True)
-                            print(f"{monstruo_seleccionado.get_nombre()} ahora está protegido contra ataques.")
-                            break
-                        else:
-                            print("Selección no válida. Por favor, ingresa un número dentro del rango.")
-                    except ValueError:
-                        print("Entrada no válida. Por favor, ingresa un número.")
-                else:
-                    print("No hay monstruos en el tablero para proteger.")
+    
 
 
-            
+
 
 
     
+    def aplicar_efecto(self, carta):
 
+
+            if carta.get_nombre() == "Espada de Arturo":
+                    # Aumenta el ataque de todos los guerreros en el tablero
+                    for monstruo in self.get_tablero_monstruos():
+                        if monstruo.get_tipo() == "Guerrero":
+                            monstruo.set_ataque(monstruo.get_ataque() + self.incremento)
+                            print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_ataque()} de ataque.")
+
+            if carta.get_nombre() == "Escudo de Chamelote":
+                    # Aumenta la defensa de todos los guerreros en el tablero
+                    for monstruo in self.get_tablero_monstruos():
+                        if monstruo.get_tipo() == "G":
+                            monstruo.set_defensa(monstruo.get_defensa() + self.incremento)
+                            print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_defensa()} de defensa.")
+
+            if carta.get_nombre()=="Pocion de Vida":
+                
+                # Restaura 500 puntos de vida al jugador
+                self.set_vida(self.get_vida() + 500)
+                print(f"{self.get_nombre()} ahora tiene {self.get_vida()} puntos de vida.")
+
+            if carta.get_nombre() == "Rayo Concentrado":
+                count = 0
+                lista = []               
+                # Aumenta el ataque de un monstruo tipo Dragón seleccionado
+                for mounstruo in self.get_tablero_magicas_trampa():
+                        
+                    if mounstruo.get_atributo() == "D" and count==0:
+                        count+=1
+                        mounstruo.set_ataque(mounstruo.get_ataque() + self.incremento )
+
+                if(count == 0):
+                    print("No se seleccionó un monstruo de tipo Dragón válido.")
+
+            if carta.get_nombre() == "Barrera de Magia":
+                # Presenta la lista de monstruos en el tablero
+                print("se ingreso a barrera de magia1")
+                if self.get_tablero_monstruos():
+                    print("Selecciona el monstruo al que deseas proteger:")
+
+            # Muestra los monstruos en el tablero con sus posiciones
+                    for idx, monstruo in enumerate(self.get_tablero_monstruos()):
+                        print(f"[{idx}] {monstruo.get_nombre()} - Ataque: {monstruo.get_ataque()}, Defensa: {monstruo.get_defensa()}")
+
+            # Pide al usuario que seleccione un monstruo por su posición
+                    while True:
+                        try:
+                            seleccion = int(input("Ingresa el número de la posición del monstruo: "))
+
+                    # Verifica que la selección sea válida
+                            if 0 <= seleccion < len(self.get_tablero_monstruos()):
+                                monstruo_seleccionado = self.get_tablero_monstruos()[seleccion]
+
+                                # Marca al monstruo como protegido
+                                monstruo_seleccionado.set_protegido(True)
+                                print(f"{monstruo_seleccionado.get_nombre()} ahora está protegido contra ataques.")
+                                break
+                            else:
+                                print("Selección no válida. Por favor, ingresa un número dentro del rango.")
+                        except ValueError:
+                            print("Entrada no válida. Por favor, ingresa un número.")
+                    else:
+                        print("No hay monstruos en el tablero para proteger.")
+
+
+    
     
         
 

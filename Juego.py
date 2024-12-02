@@ -164,10 +164,10 @@ class Juego:
             if carta:
                 print(f"[{i}] {carta.get_nombre()} - Modo: {carta.get_modo()}")
 
-        print("\nTablero de monstruos de carta y trampa de la maquina: ")
+        print("\nTablero de monstruos de carta y trampa del jugador: ")
         for i, carta in enumerate(self.maquina.get_tablero_magicas_trampa()):
             if carta:
-                print(f"[ {carta.get_nombre()}]")
+                print(f"[] {carta.get_nombre()}")
         
 
     def robar_carta(self, jugador):
