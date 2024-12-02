@@ -25,8 +25,13 @@ class CartaMonstruo(Carta):
 
     def get_usado(self):
         return self.usado
+    
+    def usar(self):
+        self.usado = True  # Marca la carta como usada
+    
     def set_usado(self, bool):
         self.usado = bool
+        
     def set_protegido (self, bool):
         self.protegido = bool
     def get_ataque(self):
@@ -99,6 +104,13 @@ class CartaTrampa(Carta):
     def __init__(self, nombre, descripcion, atributo):
         super().__init__(nombre, descripcion)
         self.atributo = atributo
+        self.usado = False
+
+    def set_usado(self, estado):
+        self.usado = estado  # Método para cambiar el estado de uso de la trampa
+
+    def get_usado(self):
+        return self.usado
 
     def get_atributo(self):
         return self.atributo
@@ -107,5 +119,6 @@ class CartaTrampa(Carta):
         """Verifica si la trampa se activa dependiendo del monstruo atacante"""
         if self.atributo == monstruo_atacante.get_elemento():
             print(f"La trampa {self.get_nombre()} ha detenido el ataque del monstruo {monstruo_atacante.get_nombre()} ({monstruo_atacante.get_elemento()}).")
+            self.set_usado(True)  # Marca la trampa como usada
             return True  # La trampa se activa
         return False

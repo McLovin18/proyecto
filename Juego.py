@@ -3,12 +3,15 @@ from Carta import *
 import random
 
 class Juego:
+
     def __init__(self):
         self.cartas = self.cargar_cartas_desde_archivo("Deck.txt")
         self.jugador = Jugador("jugador")
         self.maquina = Jugador("maquina")
         self.turno = 1  # Iniciar el turno
         self.iniciar_juego()
+
+
 
     def cargar_cartas_desde_archivo(self, archivo):
         cartas = []
@@ -140,31 +143,48 @@ class Juego:
     def mostrar_estado_juego(self):
         # Muestra el estado del juego después de cada turno
         print("\n--- Estado del Juego ---")
-        print(f"Vida del Jugador: {self.jugador.get_vida()}")
-        print(f"Vida de la máquina: {self.maquina.get_vida()}")
+        print(f"Vida del Jugador: {self.jugador.get_vida()} - Vida de la máquina: {self.maquina.get_vida()}")
 
         # Mostrar monstruos en los tableros
         print("\nTablero de Monstruos del Jugador:")
         for i, carta in enumerate(self.jugador.get_tablero_monstruos()):
             if carta:
                 print(f"[{i}] {carta.get_nombre()} - Modo: {carta.get_modo()}")
+            
+        
+        print("\nTablero de monstruos de carta y trampa del jugador: ")
+        for i, carta in enumerate(self.jugador.get_tablero_magicas_trampa()):
+            if carta:
+                print(f"[{i}] {carta.get_nombre()}")
+            
+
 
         print("\nTablero de Monstruos de la Máquina:")
         for i, carta in enumerate(self.maquina.get_tablero_monstruos()):
             if carta:
                 print(f"[{i}] {carta.get_nombre()} - Modo: {carta.get_modo()}")
 
-        print("\nMano de la Máquina:")
-        self.maquina.mostrar_mano()  # Mostrar la mano del jugador
+        print("\nTablero de monstruos de carta y trampa de la maquina: ")
+        for i, carta in enumerate(self.maquina.get_tablero_magicas_trampa()):
+            if carta:
+                print(f"[ {carta.get_nombre()}]")
+        
 
     def robar_carta(self, jugador):
         # Robar una carta aleatoria de la lista de cartas
         carta_robada = random.choice(self.cartas)
-        print(f"{jugador.get_nombre()} ha robado una carta: {carta_robada.get_nombre()}")
+        print(f"{jugador.get_nombre()} ha robado una carta: {carta_robada.get_nombre()}\n")
         return carta_robada
 
     def jugar_turno_jugador(self):
-        print("--- Turno del Jugador ---")
+        print("-------------------")
+
+        print("Turno del Jugador")
+
+        print("-------------------")
+
+
+        print("\n [Fase: tomar carta]")
 
         # El jugador roba una carta si tiene menos de 5 cartas en mano
         self.jugador.agregar_carta_a_mano(self.robar_carta(self.jugador))
@@ -241,7 +261,14 @@ class Juego:
 
     
     def jugar_turno_maquina(self):
-        print("--- Turno de la Máquina ---")
+        print("-------------------")
+        print("Turno de la Máquina")
+        print("-------------------")
+
+
+
+        print("Fase tomar carta")
+
 
         # La máquina roba una carta si tiene menos de 5 cartas en mano
         carta_robada = self.robar_carta(self.maquina)
@@ -306,7 +333,6 @@ class Juego:
             print(f"\n--- Turno {self.turno} ---")
             
             # Turno del jugador
-            print("\nEs tu turno:")
             self.jugar_turno_jugador()
             self.mostrar_estado_juego()
             
@@ -316,7 +342,6 @@ class Juego:
                 break
             
             # Turno de la máquina
-            print("\nTurno de la máquina:")
             self.jugar_turno_maquina()
             self.mostrar_estado_juego()
 
