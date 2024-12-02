@@ -18,7 +18,17 @@ class CartaMonstruo(Carta):
         self.atributo = atributo
         self.boca_arriba = True
         self.modo = "ATAQUE"  # Puede ser "ATAQUE" o "DEFENSA"
+        self.protegido = False 
+        self.usado = False
 
+
+
+    def get_usado(self):
+        return self.usado
+    def set_usado(self, bool):
+        self.usado = bool
+    def set_protegido (self, bool):
+        self.protegido = bool
     def get_ataque(self):
         return self.ataque
 
@@ -34,7 +44,7 @@ class CartaMonstruo(Carta):
     def get_tipo(self):
         return self.tipo
 
-    def get_atributo(self):
+    def get_elemento(self):
         return self.atributo
 
     def get_boca_arriba(self):
@@ -50,7 +60,7 @@ class CartaMonstruo(Carta):
         self.modo = nuevo_modo
 
 class CartaMagica(Carta):
-    def __init__(self, nombre, descripcion, incremento, tipo_monstruo, tipo_efecto):
+    def __init__(self, nombre, descripcion, incremento, tipo_monstruo):
         """
         :param nombre: Nombre de la carta.
         :param descripcion: Descripción de la carta.
@@ -61,7 +71,11 @@ class CartaMagica(Carta):
         super().__init__(nombre, descripcion)
         self.incremento = incremento
         self.tipo_monstruo = tipo_monstruo
-        self.tipo_efecto = tipo_efecto  # Nuevo atributo que define el tipo de efecto
+        self.usado = False
+
+    def get_usado(self):
+        return self.usado
+
 
     def get_incremento(self):
         return self.incremento
@@ -74,27 +88,24 @@ class CartaMagica(Carta):
 
     def aplicar_efecto(self, monstruo):
         """Aplica el efecto de la carta mágica sobre un monstruo si el tipo coincide."""
-        if self.tipo_monstruo == "Ninguno" or monstruo.get_tipo() == self.tipo_monstruo:
-            if self.tipo_efecto == "Ataque":  # Cambiado de nombre a 'tipo_efecto'
-                monstruo.set_ataque(monstruo.get_ataque() + self.incremento)
-                print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_ataque()} de ataque.")
-            elif self.tipo_efecto == "Defensa":  # Cambiado de nombre a 'tipo_efecto'
-                monstruo.set_defensa(monstruo.get_defensa() + self.incremento)
-                print(f"{monstruo.get_nombre()} ahora tiene {monstruo.get_defensa()} de defensa.")
+        
+
+
+
+
+            
 
 class CartaTrampa(Carta):
     def __init__(self, nombre, descripcion, atributo):
         super().__init__(nombre, descripcion)
         self.atributo = atributo
 
-    def get_atributo_contra(self):
-        return self.atributo_contra
+    def get_atributo(self):
+        return self.atributo
 
     def activar(self, monstruo_atacante):
         """Verifica si la trampa se activa dependiendo del monstruo atacante"""
-        # Aquí podrías agregar la lógica de activación de la trampa
-        # Ejemplo:
-        if self.atributo == "VIENTO" and monstruo_atacante.get_elemento() == "VIENTO":
-            print(f"La trampa {self.get_nombre()} ha detenido el ataque de un monstruo VIENTO.")
-            return True  # La trampa se activa y detiene el ataque
+        if self.atributo == monstruo_atacante.get_elemento():
+            print(f"La trampa {self.get_nombre()} ha detenido el ataque del monstruo {monstruo_atacante.get_nombre()} ({monstruo_atacante.get_elemento()}).")
+            return True  # La trampa se activa
         return False
